@@ -7,6 +7,17 @@ packages = [
     { include = "pytest_fixture_maker", from = "src" }
 ]
 
+keywords = ["pytest", "fixtures"]
+
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Testing",
+    "Framework :: Pytest"
+]
+
 [tool.poetry.plugins.pytest11]
 fixture_maker = "pytest_fixture_maker.plugin"
 
