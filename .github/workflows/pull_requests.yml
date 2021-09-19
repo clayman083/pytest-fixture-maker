@@ -5,48 +5,60 @@ on:
 
 
 jobs:
-  linter:
+  linters:
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+    
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
 
       - uses: actions/setup-python@v1
         with:
-          python-version: '3.9'
+          python-version: "${{ matrix.python-version }}"
           architecture: 'x64'
 
       - name: Install requirements
         # Устанавливаем зависимости
         run: pip install poetry tox
 
-      - name: Run flake8
+      - name: Run flake8 for ${{ matrix.python-version }}
         env:
           TOXENV: flake8
         run: tox
 
-      - name: Run mypy
+      - name: Run mypy for ${{ matrix.python-version }}
         env:
           TOXENV: mypy
         run: tox
-        continue-on-error: true
 
   tests:
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9"]
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
 
       - uses: actions/setup-python@v1
         with:
-          python-version: '3.9'
+          python-version: "${{ matrix.python-version }}"
           architecture: 'x64'
 
       - name: Install requirements
         # Устанавливаем зависимости
         run: pip install poetry tox
 
-      - name: Run unit tests
+      - name: Run unit tests for ${{ matrix.python-version }}
         env:
           TOXENV: unit
+        run: tox
+
+      - name: Run integration tests for ${{ matrix.python-version }}
+        env:
+          TOXENV: integration
         run: tox
 
       - name: Get coverage report
