@@ -7,6 +7,9 @@ packages = [
     { include = "pytest_fixture_maker", from = "src" }
 ]
 
+readme = "readme.md"
+repository = "https://github.com/clayman083/pytest-fixture-maker"
+
 keywords = ["pytest", "fixtures"]
 
 classifiers = [

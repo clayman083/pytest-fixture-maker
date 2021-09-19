@@ -2,9 +2,9 @@ pytest-fixture-maker: Load fixture data from local YAML files.
 ============
 
 [![Master](https://github.com/clayman083/pytest-fixture-maker/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/clayman083/pytest-fixture-maker/actions/workflows/main.yml)
-<!-- [![Coverage Status](https://coveralls.io/repos/github/clayman74/pytest-postgres/badge.svg?branch=master)](https://coveralls.io/github/clayman74/pytest-postgres?branch=master)
-[![PyPI version](https://badge.fury.io/py/pytest-postgres.svg)](https://badge.fury.io/py/pytest-postgres)
-[![PyPI](https://img.shields.io/pypi/pyversions/pytest-postgres.svg)]() -->
+<!-- [![Coverage Status](https://coveralls.io/repos/github/clayman74/pytest-postgres/badge.svg?branch=master)](https://coveralls.io/github/clayman74/pytest-postgres?branch=master) -->
+[![PyPI version](https://badge.fury.io/py/pytest-fixture-maker.svg)](https://badge.fury.io/py/pytest-fixture-maker)
+[![PyPI](https://img.shields.io/pypi/pyversions/pytest-fixture-maker.svg)]()
 
 pytest-fixture-maker is a plugin for pytest, which load fixtures data from local YAML files.
 
