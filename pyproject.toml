@@ -33,6 +33,7 @@ pytest-mypy = "0.8.0"
 pytest-xdist = {extras = ["psutil"], version = "2.3.0"}
 PyYAML = "^5.4.1"
 rope = "^0.20.1"
+types-PyYAML = "^5.4.10"
 
 
 [build-system]

@@ -1,0 +1,20 @@
+---
+
+test_fetch_by_key:
+  storage: 
+    accounts:
+      - { key: 1, name: "Visa Classic" }
+      - { key: 2, name: "Visa Gold"}
+
+test_success:
+  - id: First test case
+    account_key: 1
+    expected: { key: 1, name: "Visa Classic" }
+  - id: Second test case
+    account_key: 2
+    expected: { key: 2, name: "Visa Gold" }
+
+test_missing:
+  - id: Try fetch missing account
+    account_key: 3
+    expected_exc: AccountNotFound
