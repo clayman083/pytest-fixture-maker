@@ -1,9 +1,11 @@
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 import yaml
+from _pytest.python import Metafunc
 
 
-def get_module_fixtures(metafunc, fixtures):
+def get_module_fixtures(metafunc: Metafunc, fixtures: Dict[str, Any]) -> Dict[str, Any]:
     """Get data for module-level fixtures.
 
     Args:
@@ -25,7 +27,75 @@ def get_module_fixtures(metafunc, fixtures):
     return module_fixtures
 
 
-def pytest_generate_tests(metafunc) -> None:
+def get_test_cases(
+    metafunc: Metafunc, fixtures: Dict[str, Any], module_fixtures: Dict[str, Any]
+) -> Optional[List[Dict[str, Any]]]:
+    """Get test cases from fixtures.
+
+    Args:
+        metafunc: Metadata to generate parametrized calls to a test function.
+        fixtures: Raw fixtures data from file.
+        module_fixtures: Module-level fixtures.
+
+    Returns:
+        Raw test cases.
+    """
+    func_fixtures = None
+
+    if metafunc.function.__name__ in fixtures:
+        func_fixtures = fixtures[metafunc.function.__name__]
+
+        if not isinstance(func_fixtures, list):
+            raise ValueError(f"Test cases in `{metafunc.function.__name__}` should be list")
+
+        for fixture in func_fixtures:
+            for fixture_name, fixture_value in module_fixtures.items():
+                fixture.setdefault(fixture_name, fixture_value)
+
+    return func_fixtures
+
+
+def generate_tests(metafunc: Metafunc, fixtures: Dict[str, Any]) -> None:
+    """Generate tests for test cases.
+
+    Args:
+        metafunc: Metadata to generate parametrized calls to a test function.
+        fixtures: Raw fixtures data from file.
+    """
+    module_fixtures = get_module_fixtures(metafunc, fixtures)
+    test_cases = get_test_cases(metafunc, fixtures, module_fixtures)
+
+    if test_cases:
+        argnames: List[str] = []
+        argvalues: List[List[Any]] = []
+        indirect: List[str] = []
+        ids: List[str] = []
+
+        for index, test_case in enumerate(test_cases, start=1):
+            if "id" in test_case:
+                ids.append(test_case["id"])
+            else:
+                raise ValueError(f"Test case #{index} in `{metafunc.function.__name__}` should have id")
+
+            if not argnames:
+                argnames = sorted(
+                    [argname for argname in test_case if argname != "id" and argname in metafunc.fixturenames]
+                )
+                indirect = [argname for argname in argnames if argname in metafunc.fixturenames]
+
+            values = []
+            for name in argnames:
+                if name not in test_case:
+                    raise ValueError(f"Test cases in `{metafunc.function.__name__}` should have same arg names")
+
+                values.append(test_case[name])
+
+            argvalues.append(values)
+
+        metafunc.parametrize(argnames=argnames, argvalues=argvalues, indirect=indirect, ids=ids)
+
+
+def pytest_generate_tests(metafunc: Metafunc) -> None:
     """Pytest hook to generate parametrized calls to a test function.
 
     Args:
@@ -38,20 +108,4 @@ def pytest_generate_tests(metafunc) -> None:
         with fixture_file.open("r") as fp:
             fixtures = yaml.safe_load(fp.read())
 
-        module_fixtures = get_module_fixtures(metafunc, fixtures)
-
-        if metafunc.function.__name__ in fixtures:
-            scenario = fixtures[metafunc.function.__name__]
-            for fixture in scenario:
-                for fixture_name, fixture_value in module_fixtures.items():
-                    fixture.setdefault(fixture_name, fixture_value)
-
-            argnames = sorted(
-                [argname for argname in scenario[0] if argname != "id" and argname in metafunc.fixturenames]
-            )
-            argvalues = [[funcargs[name] for name in argnames if name != "id"] for funcargs in scenario]
-
-            indirect = [fixturename for fixturename in argnames if fixturename in metafunc.fixturenames]
-            ids = [funcargs["id"] for funcargs in scenario]
-
-        metafunc.parametrize(argnames, argvalues, indirect=indirect, ids=ids)
+        generate_tests(metafunc, fixtures)

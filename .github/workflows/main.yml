@@ -60,14 +60,9 @@ jobs:
         # Устанавливаем зависимости
         run: pip install poetry tox
 
-      # - name: Run unit tests for ${{ matrix.python-version }}
-      #   env:
-      #     TOXENV: unit
-      #   run: tox
-
-      - name: Run integration tests for ${{ matrix.python-version }}
+      - name: Run tests for ${{ matrix.python-version }}
         env:
-          TOXENV: integration
+          TOXENV: tests
         run: tox
 
       - name: Get coverage report
