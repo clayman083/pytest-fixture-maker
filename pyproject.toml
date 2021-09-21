@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytest-fixture-maker"
-version = "0.1.1"
+version = "0.2.0"
 description = "Pytest plugin to load fixtures from YAML files"
 authors = ["Kirill Sumorokov <sumorokov.k@gmail.com>"]
 packages = [
